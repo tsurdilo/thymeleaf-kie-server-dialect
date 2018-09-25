@@ -1,0 +1,1 @@
+# thymeleaf-kie-server-dialect
