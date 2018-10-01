@@ -60,9 +60,9 @@ xmlns:kieserver="http://jbpm.org/"
 # Starting a business process
 In the body section of your page add:
 ```html
-<kieserver:startprocess processid="${processid}" containerid="${containerid}" processinputs="${processinputs}"/>
-
-}
+<kieserver:startprocess processid="${processid}" 
+                        containerid="${containerid}" 
+                        processinputs="${processinputs}"/>
 ```
 
 where ${processid} ${containerid} and processinputs are your Model attributes added in the 
