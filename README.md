@@ -18,16 +18,16 @@ Thymeleaf and this dialect
 </dependency>
 
 <dependency>
-  <groupId>net.sourceforge.nekohtml</groupId>
-  <artifactId>nekohtml</artifactId>
-</dependency>
-
-<dependency>
   <groupId>org.jbpm.addons</groupId>
   <artifactId>thymeleaf-kie-server-dialect</artifactId>
   <version>1.0-SNAPSHOT</version>
 </dependency>
 
+<!-- optional only if thymeleaf mode in step 2. is added, if not then dont need this depends -->
+<dependency>
+  <groupId>net.sourceforge.nekohtml</groupId>
+  <artifactId>nekohtml</artifactId>
+</dependency>
 ```
 
 2. in your sr/main/resources/application*.xml used add (this is optional step):
