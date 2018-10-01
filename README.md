@@ -75,3 +75,11 @@ where as processinput has to be an expression mapping to a Map<String, Object> m
 * processid and containerid are required attributes,
 where processinputs is optional (in case your process started does not take any input).
 
+When your page is being parsed by Thymeleaf the business process will be started. 
+the html tag for this directive will be replaced with:
+
+```html
+<div style="visibility: hidden;">PID: XYZ</div>
+```
+
+where XYZ is the process instance id of the business process you started.

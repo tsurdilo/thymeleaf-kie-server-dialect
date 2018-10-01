@@ -136,9 +136,9 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
         }
 
         final Element container = new Element("div");
-
-        final Text text = new Text("process instance id: " + processInstanceId);
+        final Text text = new Text("PID: " + processInstanceId);
         container.addChild(text);
+        container.setAttribute("style", "visibility: hidden;");
 
         final List<Node> nodes = new ArrayList<Node>();
         nodes.add(container);
