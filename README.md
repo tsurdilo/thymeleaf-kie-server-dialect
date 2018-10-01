@@ -68,6 +68,10 @@ In the body section of your page add:
 where ${processid} ${containerid} and processinputs are your Model attributes added in the 
 @Get mapping of your template. 
 
-Note that for kieserver:startprocess processid and containerid are required attributes,
+Notes:
+* processid and containerid attributes can also accept hard-coded string values
+where as processinput has to be an expression mapping to a Map<String, Object> model object.
+
+* processid and containerid are required attributes,
 where processinputs is optional (in case your process started does not take any input).
 

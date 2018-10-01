@@ -17,24 +17,21 @@ package org.jbpm.addons.processor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.jbpm.services.api.ProcessService;
+import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
+import org.thymeleaf.Configuration;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
+import org.thymeleaf.dom.Text;
 import org.thymeleaf.processor.IElementNameProcessorMatcher;
 import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
-import org.springframework.context.ApplicationContext;
 import org.thymeleaf.spring4.context.SpringWebContext;
-import org.thymeleaf.dom.Text;
-import org.jbpm.services.api.DeploymentService;
-import org.jbpm.services.api.RuntimeDataService;
-import org.jbpm.services.api.ProcessService;
-import org.kie.server.springboot.jbpm.ContainerAliasResolver;
-import org.thymeleaf.Configuration;
+import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
-import org.thymeleaf.standard.expression.IStandardExpression;
-import java.util.Map;
 
 public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProcessor {
 
@@ -64,65 +61,84 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
             final Element element) {
 
         final ApplicationContext appCtx =
-               ((SpringWebContext) arguments.getContext()).getApplicationContext();
+                ((SpringWebContext) arguments.getContext()).getApplicationContext();
 
         //DeploymentService deploymentService = (DeploymentService) appCtx.getBean("deploymentService");
         //RuntimeDataService runtimeDataService = (RuntimeDataService) appCtx.getBean("runtimeDataService");
-        ProcessService processService = (ProcessService) appCtx.getBean("processService");
         //ContainerAliasResolver aliasResolver = (ContainerAliasResolver) appCtx.getBean("aliasResolver");
-
-        //System.out.println("DEPLOYMENTSERVICE: " + deploymentService.toString());
-        //System.out.println("RUNTIMEDATASERVICE: " + runtimeDataService.toString());
-        //System.out.println("PROCESSSERVICE: " + processService.toString());
+        ProcessService processService = (ProcessService) appCtx.getBean("processService");
 
         String containerIdAttrValue = element.getAttributeValue("containerid");
         String processIdAttrValue = element.getAttributeValue("processid");
         String processInputsAttrValue = element.getAttributeValue("processinputs");
 
+        String containerId;
+        String processId;
+        Map<String, Object> processInputs = null;
+        long processInstanceId;
+
         Configuration configuration = arguments.getConfiguration();
         IStandardExpressionParser parser =
                 StandardExpressions.getExpressionParser(configuration);
 
-        IStandardExpression containerIdExpression =
-                parser.parseExpression(configuration, arguments, containerIdAttrValue);
+        if (containerIdAttrValue != null && containerIdAttrValue.startsWith("${") && containerIdAttrValue.endsWith("}")) {
+            IStandardExpression containerIdExpression =
+                    parser.parseExpression(configuration,
+                                           arguments,
+                                           containerIdAttrValue);
 
-        String containerId =
-                (String) containerIdExpression.execute(configuration, arguments);
+            containerId =
+                    (String) containerIdExpression.execute(configuration,
+                                                           arguments);
 
-        IStandardExpression processIdExpression =
-                parser.parseExpression(configuration, arguments, processIdAttrValue);
-
-        String processId =
-                (String) processIdExpression.execute(configuration, arguments);
-
-        IStandardExpression processInputsExpression =
-                parser.parseExpression(configuration, arguments, processInputsAttrValue);
-
-        Map<String, Object> processInputs =
-                (Map<String, Object>) processInputsExpression.execute(configuration, arguments);
-
-        if(processId == null) {
-            throw new IllegalArgumentException("Unable to resolve expression for processid: " + processId);
-        }
-
-        if(containerId == null) {
-            throw new IllegalArgumentException("Unable to resolve expression for containerid: " + containerId);
-        }
-
-        long processInstanceId;
-
-        if(processId == null) {
-            processInstanceId = processService.startProcess(containerId, processId);
+            if (containerId == null) {
+                throw new IllegalArgumentException("Unable to resolve expression for containerid: " + containerId);
+            }
         } else {
-            processInstanceId = processService.startProcess(containerId, processId, processInputs);
+            containerId = containerIdAttrValue;
+        }
+
+        if (processIdAttrValue != null && processIdAttrValue.startsWith("${") && processIdAttrValue.endsWith("}")) {
+            IStandardExpression processIdExpression =
+                    parser.parseExpression(configuration,
+                                           arguments,
+                                           processIdAttrValue);
+
+            processId =
+                    (String) processIdExpression.execute(configuration,
+                                                         arguments);
+
+            if (processId == null) {
+                throw new IllegalArgumentException("Unable to resolve expression for processid: " + processId);
+            }
+        } else {
+            processId = processIdAttrValue;
+        }
+
+        if (processInputsAttrValue != null && processInputsAttrValue.startsWith("${") && processInputsAttrValue.endsWith("}")) {
+            IStandardExpression processInputsExpression =
+                    parser.parseExpression(configuration,
+                                           arguments,
+                                           processInputsAttrValue);
+
+            processInputs =
+                    (Map<String, Object>) processInputsExpression.execute(configuration,
+                                                                          arguments);
+        }
+
+        if (processInputs == null) {
+            processInstanceId = processService.startProcess(containerId,
+                                                            processId);
+        } else {
+            processInstanceId = processService.startProcess(containerId,
+                                                            processId,
+                                                            processInputs);
         }
 
         final Element container = new Element("div");
 
-
         final Text text = new Text("process instance id: " + processInstanceId);
         container.addChild(text);
-
 
         final List<Node> nodes = new ArrayList<Node>();
         nodes.add(container);
