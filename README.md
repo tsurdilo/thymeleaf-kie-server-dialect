@@ -30,13 +30,13 @@ Thymeleaf and this dialect
 
 ```
 
-2. in your sr/main/resources/application*.xml used add:
+2. in your sr/main/resources/application*.xml used add (this is optional step):
 
 ```
 spring.thymeleaf.mode=LEGACYHTML5
 ```
 
-3. Third and last configuration step is to register the dialect. In your existing @Configuration
+3.Register the dialect. In your existing @Configuration
 class or a new one add the following bean definition:
 
 ```java
