@@ -3,48 +3,35 @@
 This is a KIE Server dialect for jBPM business applications (start.jbpm.org) used 
 with integration with Thymeleaf. 
 
-It provides a number of useful markup options to perform operations inside your 
-thymeleaf templates. 
+It allows you to interact with many services exposed in your jBPM business application
+straight in your Thymeleaf html templates, without writing any integration code at all.
 
 # Installing the dialect
-Once you have created your business appliation on start.jbpm.org you can easily install
-Thymeleaf and this dialect
+Once you have created your business appliation on start.jbpm.org you can easily install this dialect
+in just two steps:
 
 1. in your service module pom.xml add dependecies:
 ```xml
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-thymeleaf</artifactId>
-</dependency>
-
 <dependency>
   <groupId>org.jbpm.addons</groupId>
   <artifactId>thymeleaf-kie-server-dialect</artifactId>
   <version>1.0-SNAPSHOT</version>
 </dependency>
-
-<!-- optional only if thymeleaf mode in step 2. is added, if not then dont need this depends -->
-<dependency>
-  <groupId>net.sourceforge.nekohtml</groupId>
-  <artifactId>nekohtml</artifactId>
-</dependency>
 ```
 
-2. in your sr/main/resources/application*.xml used add (this is optional step):
+The Kie Servier Dialect dependency will pull in Thymeleaf integration for you automatically.
+
+2. in your service module create or edit existing /src/main/resources/META-INF/spring.factories file to add:
 
 ```
-spring.thymeleaf.mode=LEGACYHTML5
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.jbpm.addons.config.KieServerDialectConfig
 ```
 
-3.Register the dialect. In your existing @Configuration
-class or a new one add the following bean definition:
+this will enable automatic config of the kie server dialect beans and properties
 
-```java
-@Bean
-public KieServerDialect kieServerDialect() {
-    return new KieServerDialect();
-}
-```
+And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
+
 # Using the dialect
 Once registered you can start using the dialect markup in your Thymeleaf templates.
 Regardless of the template markup used, you should add in your html node of the template:
@@ -56,6 +43,19 @@ In your template html node add:
 xmlns:kieserver="http://jbpm.org/"
 }
 ```
+
+# Display all process definitions
+In the body section of your template add:
+```html
+<kieserver:showprocesses/>
+```
+
+This will generate a table on your page displaying all processes that are defined and registered, for example:
+
+![Sample process definitions](sampleprocessdefs.png?raw=true)
+
+Once more processes are registered or unregistered a simple page-refresh will update 
+this table for you. 
 
 # Starting a business process
 In the body section of your page add:
@@ -76,10 +76,6 @@ where as processinput has to be an expression mapping to a Map<String, Object> m
 where processinputs is optional (in case your process started does not take any input).
 
 When your page is being parsed by Thymeleaf the business process will be started. 
-the html tag for this directive will be replaced with:
+and the output will be an alert, for example:
 
-```html
-<div style="visibility: hidden;">PID: XYZ</div>
-```
-
-where XYZ is the process instance id of the business process you started.
+![Sample process start result](sampleprocessstartresult.png?raw=true)

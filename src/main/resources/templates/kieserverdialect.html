@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<div class="alert alert-success" role="alert" th:fragment="startprocess">
+    <strong>Process successfully started! Process instance id: <span th:text="${startedpid}"/></strong>
+</div>
+
+<div th:fragment="showprocesses">
+    <div class="page-header">
+        <h3>
+            <center><strong>Process definitions</strong></center>
+        </h3>
+    </div>
+    <div th:if="${not #lists.isEmpty(processdefs)}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Version</th>
+                <th scope="col">Package</th>
+                <th scope="col">Type</th>
+                <th scope="col">Deployment Id</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="processdef: ${processdefs}">
+                <th scope="row" th:text="${processdefStat.count}"/>
+                <td th:text="${processdef.id}"/>
+                <td th:text="${processdef.name}"/>
+                <td th:text="${processdef.version}"/>
+                <td th:text="${processdef.packageName}"/>
+                <td th:text="${processdef.type}"/>
+                <td th:text="${processdef.deploymentId}"/>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processdefs)}">
+        <strong>No Process definitions available.</strong>
+    </div>
+</div>
+</body>
+</html>

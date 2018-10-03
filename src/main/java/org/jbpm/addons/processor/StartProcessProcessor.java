@@ -1,18 +1,3 @@
-/*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jbpm.addons.processor;
 
 import java.util.ArrayList;
@@ -25,7 +10,6 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.Configuration;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
-import org.thymeleaf.dom.Text;
 import org.thymeleaf.processor.IElementNameProcessorMatcher;
 import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
 import org.thymeleaf.spring4.context.SpringWebContext;
@@ -60,12 +44,9 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
             final Arguments arguments,
             final Element element) {
 
-        final ApplicationContext appCtx =
+        ApplicationContext appCtx =
                 ((SpringWebContext) arguments.getContext()).getApplicationContext();
 
-        //DeploymentService deploymentService = (DeploymentService) appCtx.getBean("deploymentService");
-        //RuntimeDataService runtimeDataService = (RuntimeDataService) appCtx.getBean("runtimeDataService");
-        //ContainerAliasResolver aliasResolver = (ContainerAliasResolver) appCtx.getBean("aliasResolver");
         ProcessService processService = (ProcessService) appCtx.getBean("processService");
 
         String containerIdAttrValue = element.getAttributeValue("containerid");
@@ -80,6 +61,8 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
         Configuration configuration = arguments.getConfiguration();
         IStandardExpressionParser parser =
                 StandardExpressions.getExpressionParser(configuration);
+
+
 
         if (containerIdAttrValue != null && containerIdAttrValue.startsWith("${") && containerIdAttrValue.endsWith("}")) {
             IStandardExpression containerIdExpression =
@@ -135,12 +118,14 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
                                                             processInputs);
         }
 
-        final Element container = new Element("div");
-        final Text text = new Text("PID: " + processInstanceId);
-        container.addChild(text);
-        container.setAttribute("style", "visibility: hidden;");
+        arguments.getContext().getVariables().put("startedpid",
+                                                  processInstanceId);
 
-        final List<Node> nodes = new ArrayList<Node>();
+        Element container = new Element("div");
+        container.setAttribute("th:replace",
+                               "kieserverdialect :: startprocess");
+
+        List<Node> nodes = new ArrayList<Node>();
         nodes.add(container);
         return nodes;
     }
