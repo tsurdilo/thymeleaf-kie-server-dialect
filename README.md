@@ -8,9 +8,9 @@ straight in your Thymeleaf html templates, without writing any integration code 
 
 # Installing the dialect
 Once you have created your business appliation on start.jbpm.org you can easily install this dialect
-in just a couple of steps:
+in just a single step:
 
-1. in your service module pom.xml add dependecies:
+1. In your service module pom.xml add dependency:
 ```xml
 <dependency>
   <groupId>org.jbpm.addons</groupId>
@@ -18,16 +18,6 @@ in just a couple of steps:
   <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
-
-The Kie Servier Dialect dependency will pull in Thymeleaf integration for you automatically.
-
-2. import the kie server dialect configuration in your spring boot business app, in your Application.java add type 
-annotation:
-
-```java
-@Import({KieServerDialectConfig.class})
-```
-
 And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
 
 # Using the dialect
