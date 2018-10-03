@@ -8,7 +8,7 @@ straight in your Thymeleaf html templates, without writing any integration code 
 
 # Installing the dialect
 Once you have created your business appliation on start.jbpm.org you can easily install this dialect
-in just two steps:
+in just three steps:
 
 1. in your service module pom.xml add dependecies:
 ```xml
@@ -28,7 +28,31 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   org.jbpm.addons.config.KieServerDialectConfig
 ```
 
-this will enable automatic config of the kie server dialect beans and properties
+this will enable automatic configuration of the kie server dialect beans and properties
+
+
+3. in your service module pom.xml enable sharing resources with the dialect. Add this plugin in the <build><plugins> section of the pom:
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-remote-resources-plugin</artifactId>
+  <version>1.5</version>
+  <executions>
+    <execution>
+      <id>process-remote-resources</id>
+      <goals>
+        <goal>process</goal>
+      </goals>
+      <configuration>
+        <resourceBundles>
+          <resourceBundle>org.jbpm.apps:sample-riot-league-stats-model:1.0-SNAPSHOT</resourceBundle>
+        </resourceBundles>
+     </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
 
 And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
 
