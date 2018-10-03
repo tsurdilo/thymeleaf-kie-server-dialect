@@ -21,25 +21,12 @@ in just a couple of steps:
 
 The Kie Servier Dialect dependency will pull in Thymeleaf integration for you automatically.
 
-2. add the dialect package to the list of scanned ones so that dialect beans can be registered. For this in your 
-src/main/java/$package$/Application.java replace the annotation 
+2. import the kie server dialect configuration in your spring boot business app, in your Application.java add type 
+annotation:
 
 ```java
-@SpringBootApplication
+@Import({KieServerDialectConfig.class})
 ```
-
-with
-
-```java
-@SpringBootApplication(scanBasePackages = {
-        "$package$",
-        "org.jbpm.addons"})
-```
-
-where $package$ is the base package of your service module, for example "com.company.service" 
-or whatever the package name you have defined when building your business app.
-
-this will enable automatic configuration of the kie server dialect beans and properties.
 
 And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
 
