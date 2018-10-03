@@ -40,28 +40,6 @@
 
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>bundle</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <includes>
-            <include>**/*.html</include>
-            <include>**/*.properties</include>
-          </includes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
   <repositories>
     <repository>
       <id>central</id>

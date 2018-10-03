@@ -8,7 +8,7 @@ straight in your Thymeleaf html templates, without writing any integration code 
 
 # Installing the dialect
 Once you have created your business appliation on start.jbpm.org you can easily install this dialect
-in just three steps:
+in just a couple of steps:
 
 1. in your service module pom.xml add dependecies:
 ```xml
@@ -21,38 +21,25 @@ in just three steps:
 
 The Kie Servier Dialect dependency will pull in Thymeleaf integration for you automatically.
 
-2. in your service module create or edit existing /src/main/resources/META-INF/spring.factories file to add:
+2. add the dialect package to the list of scanned ones so that dialect beans can be registered. For this in your 
+src/main/java/$package$/Application.java replace the annotation 
 
+```java
+@SpringBootApplication
 ```
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.jbpm.addons.config.KieServerDialectConfig
+
+with
+
+```java
+@SpringBootApplication(scanBasePackages = {
+        "$package$",
+        "org.jbpm.addons"})
 ```
 
-this will enable automatic configuration of the kie server dialect beans and properties
+where $package$ is the base package of your service module, for example "com.company.service" 
+or whatever the package name you have defined when building your business app.
 
-
-3. in your service module pom.xml enable sharing resources with the dialect. Add this plugin in the <build><plugins> section of the pom:
-
-```xml
-<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-remote-resources-plugin</artifactId>
-  <version>1.5</version>
-  <executions>
-    <execution>
-      <id>process-remote-resources</id>
-      <goals>
-        <goal>process</goal>
-      </goals>
-      <configuration>
-        <resourceBundles>
-          <resourceBundle>org.jbpm.apps:sample-riot-league-stats-model:1.0-SNAPSHOT</resourceBundle>
-        </resourceBundles>
-     </configuration>
-    </execution>
-  </executions>
-</plugin>
-```
+this will enable automatic configuration of the kie server dialect beans and properties.
 
 And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
 
