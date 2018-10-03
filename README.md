@@ -41,7 +41,6 @@ In your template html node add:
 
 ```html
 xmlns:kieserver="http://jbpm.org/"
-}
 ```
 
 # Display all process definitions
