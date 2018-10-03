@@ -33,8 +33,9 @@ this will enable automatic config of the kie server dialect beans and properties
 And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
 
 # Using the dialect
-Once registered you can start using the dialect markup in your Thymeleaf templates.
-Regardless of the template markup used, you should add in your html node of the template (this is not required tho)
+
+# Define the "kieserver" namespace
+In your html templates add (note this step is optional)
 
 ```html
 xmlns:kieserver="http://jbpm.org/"
