@@ -34,10 +34,7 @@ And that's it! You are now ready to start using the dialect in your Thymeleaf te
 
 # Using the dialect
 Once registered you can start using the dialect markup in your Thymeleaf templates.
-Regardless of the template markup used, you should add in your html node of the template:
-
-1. Starting a process from Thymeleaf template:
-In your template html node add:
+Regardless of the template markup used, you should add in your html node of the template (this is not required tho)
 
 ```html
 xmlns:kieserver="http://jbpm.org/"
