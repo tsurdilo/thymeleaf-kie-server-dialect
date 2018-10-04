@@ -29,7 +29,7 @@ you need to add the boostrap style to your page <head> section, for example:
 ```html
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">  
 ```
-2. All dialect tags start with <kieserver:.../> and you can define this as namespace as an attribute in your <html>
+2. All dialect tags start with &gt;kieserver:.../&lt; and you can define this as namespace as an attribute in your <html>
 page tag (note this step is optional):
 
 ```html
