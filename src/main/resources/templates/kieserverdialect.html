@@ -82,23 +82,23 @@
                             </tr>
                             </tbody>
                         </table>
-                        <!--<br/><strong>Deployed Classes: </strong>-->
-                        <!--<table class="table table-striped">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th scope="col">#</th>-->
-                                <!--<th scope="col">Class Name</th>-->
-                                <!--<th scope="col">Class Type</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody>-->
-                            <!--<tr th:each="dunitclass: ${dunit.getDeployedClasses()}">-->
-                                <!--<th scope="row" th:text="${dunitclassStat.count}"/>-->
-                                <!--<td th:text="${dunitclass.getName()}"/>-->
-                                <!--<td th:text="${dunitclass.getTypeName()}"/>-->
-                            <!--</tr>-->
-                            <!--</tbody>-->
-                        <!--</table>-->
+                        <br/><strong>Deployed Classes: </strong>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Class Name</th>
+                                <th scope="col">Class Type</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="dunitclass: ${dunit.getDeployedClasses()}">
+                                <th scope="row" th:text="${dunitclassStat.count}"/>
+                                <td th:text="${dunitclass.getName()}"/>
+                                <td th:text="${dunitclass.getTypeName()}"/>
+                            </tr>
+                            </tbody>
+                        </table>
                     </p>
                 </div>
             </div>
