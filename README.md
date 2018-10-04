@@ -66,6 +66,20 @@ deployment unit:
 <kieserver:deployments deploymentid="${deploymentid}"/>
 ```
 
+# Display process instances info
+In the body section of your template add:
+```html
+<kieserver:processinstances/>
+```
+
+This will display info table with  all available process instances:
+
+![Sample deployment unit info](sampleprocessinstances.png?raw=true)
+
+If you process instance is active the Active Tasks column will be populated with the 
+Task names.
+
+
 # Starting a business process
 In the body section of your page add:
 ```html

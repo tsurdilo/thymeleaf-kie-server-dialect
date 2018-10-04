@@ -46,6 +46,53 @@
 </div>
 
 
+<div th:fragment="showprocessinstances">
+    <div class="page-header">
+        <h3>
+            <center><strong>Process Instances Info</strong></center>
+        </h3>
+    </div>
+    <div th:if="${not #lists.isEmpty(processinstances)}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">State</th>
+                <th scope="col">Version</th>
+                <th scope="col">Initiator</th>
+                <th scope="col">Description</th>
+                <th scope="col">Correlation Key</th>
+                <th scope="col">Active Tasks</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="processinst: ${processinstances}">
+                <th scope="row" th:text="${processinstStat.count}"/>
+                <td th:text="${processinst.getId()}"/>
+                <td th:text="${processinst.getProcessName()}"/>
+                <td th:text="${processinst.getState()}"/>
+                <td th:text="${processinst.getProcessVersion()}"/>
+                <td th:text="${processinst.getInitiator()}"/>
+                <td th:text="${processinst.getProcessInstanceDescription()}"/>
+                <td th:text="${processinst.getCorrelationKey()}"/>
+                <td>
+                    <ul>
+                        <li th:each="activetask : ${processinst.getActiveTasks()}"
+                            th:text="${activetask.getName()}"></li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processinstances)}">
+        <strong>No Process Instances available.</strong>
+    </div>
+</div>
+
+
 <div th:fragment="showdeployedunits">
     <div class="page-header">
         <h3>

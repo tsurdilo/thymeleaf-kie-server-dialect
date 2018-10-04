@@ -3,11 +3,12 @@ package org.jbpm.addons.dialect;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jbpm.addons.processor.DeployedUnitProcessor;
+import org.jbpm.addons.processor.ProcessInstancesProcessor;
 import org.jbpm.addons.processor.ProcessesDefsProcessor;
 import org.jbpm.addons.processor.StartProcessProcessor;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
-import org.jbpm.addons.processor.DeployedUnitProcessor;
 
 public class KieServerDialect extends AbstractDialect {
 
@@ -21,7 +22,7 @@ public class KieServerDialect extends AbstractDialect {
         processors.add(new StartProcessProcessor());
         processors.add(new ProcessesDefsProcessor());
         processors.add(new DeployedUnitProcessor());
-
+        processors.add(new ProcessInstancesProcessor());
         return processors;
     }
 }
