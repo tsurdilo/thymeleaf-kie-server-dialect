@@ -22,8 +22,15 @@ And that's it! You are now ready to start using the dialect in your Thymeleaf te
 
 # Using the dialect
 
-# Define the "kieserver" namespace
-In your html templates add (note this step is optional)
+# Setting up your template html
+1. Kie Server dialect produces html which includes some boostrap style class names. In order for those to work
+you need to add the boostrap style to your page <head> section, for example:
+
+```html
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">  
+```
+2. All dialect tags start with <kieserver:.../> and you can define this as namespace as an attribute in your <html>
+page tag (note this step is optional):
 
 ```html
 xmlns:kieserver="http://jbpm.org/"
