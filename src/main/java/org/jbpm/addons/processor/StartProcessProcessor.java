@@ -75,7 +75,7 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
                                                            arguments);
 
             if (containerId == null) {
-                throw new IllegalArgumentException("Unable to resolve expression for containerid: " + containerId);
+                throw new IllegalArgumentException("Unable to resolve expression for containerid: " + containerIdAttrValue);
             }
         } else {
             containerId = containerIdAttrValue;
@@ -92,7 +92,7 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
                                                          arguments);
 
             if (processId == null) {
-                throw new IllegalArgumentException("Unable to resolve expression for processid: " + processId);
+                throw new IllegalArgumentException("Unable to resolve expression for processid: " + processIdAttrValue);
             }
         } else {
             processId = processIdAttrValue;

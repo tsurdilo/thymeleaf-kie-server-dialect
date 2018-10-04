@@ -8,10 +8,10 @@
     <strong>Process successfully started! Process instance id: <span th:text="${startedpid}"/></strong>
 </div>
 
-<div th:fragment="showprocesses">
+<div th:fragment="showprocessdefs">
     <div class="page-header">
         <h3>
-            <center><strong>Process definitions</strong></center>
+            <center><strong>Process Definitions Info</strong></center>
         </h3>
     </div>
     <div th:if="${not #lists.isEmpty(processdefs)}">
@@ -41,8 +41,74 @@
         </table>
     </div>
     <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processdefs)}">
-        <strong>No Process definitions available.</strong>
+        <strong>No Process Definitions available.</strong>
     </div>
 </div>
+
+
+<div th:fragment="showdeployedunits">
+    <div class="page-header">
+        <h3>
+            <center><strong>Deployment Units Info</strong></center>
+        </h3>
+    </div>
+    <div th:if="${not #lists.isEmpty(deployedunits)}">
+        <div class="card-deck">
+
+            <div class="card mb-4">
+                <div class="card-body" th:each="dunit: ${deployedunits}">
+                    <p>
+                        <strong><span th:text="'ID: ' + ${dunit.getDeploymentUnit().getIdentifier()}"></span></strong>
+                        <br/><strong><span th:text="'Strategy: ' + ${dunit.getDeploymentUnit().getStrategy()}"></span></strong>
+                        <br/><strong><span th:text="'Is Active: ' + ${dunit.getDeploymentUnit().isActive()}"></span></strong>
+                        <br/><br/><strong>Deployed Assets: </strong>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Asset ID</th>
+                                <th scope="col">Asset Name</th>
+                                <th scope="col">Asset Version</th>
+                                <th scope="col">Asset Type</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="dunitasset: ${dunit.getDeployedAssets()}">
+                                <th scope="row" th:text="${dunitassetStat.count}"/>
+                                <td th:text="${dunitasset.getId()}"/>
+                                <td th:text="${dunitasset.getName()}"/>
+                                <td th:text="${dunitasset.getVersion()}"/>
+                                <td th:text="${dunitasset.getKnowledgeType()}"/>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!--<br/><strong>Deployed Classes: </strong>-->
+                        <!--<table class="table table-striped">-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                                <!--<th scope="col">#</th>-->
+                                <!--<th scope="col">Class Name</th>-->
+                                <!--<th scope="col">Class Type</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <!--<tbody>-->
+                            <!--<tr th:each="dunitclass: ${dunit.getDeployedClasses()}">-->
+                                <!--<th scope="row" th:text="${dunitclassStat.count}"/>-->
+                                <!--<td th:text="${dunitclass.getName()}"/>-->
+                                <!--<td th:text="${dunitclass.getTypeName()}"/>-->
+                            <!--</tr>-->
+                            <!--</tbody>-->
+                        <!--</table>-->
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(deployedunits)}">
+        <strong>No Deployment Units available.</strong>
+    </div>
+</div>
+
 </body>
 </html>

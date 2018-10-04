@@ -15,20 +15,20 @@ import org.thymeleaf.processor.IElementNameProcessorMatcher;
 import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
 import org.thymeleaf.spring4.context.SpringWebContext;
 
-public class ShowProcessesProcessor extends AbstractMarkupSubstitutionElementProcessor {
+public class ProcessesDefsProcessor extends AbstractMarkupSubstitutionElementProcessor {
 
-    private static final String ATTR_NAME = "showprocesses";
+    private static final String ATTR_NAME = "processdefs";
     private static final int PRECEDENCE = 10000;
 
-    public ShowProcessesProcessor(String elementName) {
+    public ProcessesDefsProcessor(String elementName) {
         super(elementName);
     }
 
-    public ShowProcessesProcessor() {
+    public ProcessesDefsProcessor() {
         super(ATTR_NAME);
     }
 
-    public ShowProcessesProcessor(IElementNameProcessorMatcher matcher) {
+    public ProcessesDefsProcessor(IElementNameProcessorMatcher matcher) {
         super(matcher);
     }
 
@@ -53,7 +53,7 @@ public class ShowProcessesProcessor extends AbstractMarkupSubstitutionElementPro
 
         Element container = new Element("div");
         container.setAttribute("th:replace",
-                               "kieserverdialect :: showprocesses");
+                               "kieserverdialect :: showprocessdefs");
 
         List<Node> nodes = new ArrayList<Node>();
         nodes.add(container);
