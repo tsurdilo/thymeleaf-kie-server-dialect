@@ -17,6 +17,8 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
+import static org.jbpm.addons.util.KieServerDialectUtils.isExpression;
+
 public class DeployedUnitProcessor extends AbstractMarkupSubstitutionElementProcessor {
 
     private static final String ATTR_NAME = "deployments";
@@ -58,7 +60,7 @@ public class DeployedUnitProcessor extends AbstractMarkupSubstitutionElementProc
         List<DeployedUnit> deployedUnitList = new ArrayList<DeployedUnit>();
 
         if (deploymentUnitNameAttrValue != null && !deploymentUnitNameAttrValue.isEmpty()) {
-            if (deploymentUnitNameAttrValue.startsWith("${") && deploymentUnitNameAttrValue.endsWith("}")) {
+            if (isExpression(deploymentUnitNameAttrValue)) {
                 IStandardExpression deploymentUnitExpression =
                         parser.parseExpression(configuration,
                                                arguments,

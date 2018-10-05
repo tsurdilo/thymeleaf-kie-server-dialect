@@ -17,6 +17,8 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
+import static org.jbpm.addons.util.KieServerDialectUtils.isExpression;
+
 public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProcessor {
 
     private static final String ATTR_NAME = "startprocess";
@@ -64,7 +66,7 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
 
 
 
-        if (containerIdAttrValue != null && containerIdAttrValue.startsWith("${") && containerIdAttrValue.endsWith("}")) {
+        if (isExpression(containerIdAttrValue)) {
             IStandardExpression containerIdExpression =
                     parser.parseExpression(configuration,
                                            arguments,
@@ -81,7 +83,7 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
             containerId = containerIdAttrValue;
         }
 
-        if (processIdAttrValue != null && processIdAttrValue.startsWith("${") && processIdAttrValue.endsWith("}")) {
+        if (isExpression(processIdAttrValue)) {
             IStandardExpression processIdExpression =
                     parser.parseExpression(configuration,
                                            arguments,
@@ -98,7 +100,7 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
             processId = processIdAttrValue;
         }
 
-        if (processInputsAttrValue != null && processInputsAttrValue.startsWith("${") && processInputsAttrValue.endsWith("}")) {
+        if (isExpression(processInputsAttrValue)) {
             IStandardExpression processInputsExpression =
                     parser.parseExpression(configuration,
                                            arguments,
@@ -109,17 +111,22 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
                                                                           arguments);
         }
 
-        if (processInputs == null) {
-            processInstanceId = processService.startProcess(containerId,
-                                                            processId);
-        } else {
-            processInstanceId = processService.startProcess(containerId,
-                                                            processId,
-                                                            processInputs);
-        }
+        try {
+            if (processInputs == null) {
+                processInstanceId = processService.startProcess(containerId,
+                                                                processId);
+            } else {
+                processInstanceId = processService.startProcess(containerId,
+                                                                processId,
+                                                                processInputs);
+            }
 
-        arguments.getContext().getVariables().put("startedpid",
-                                                  processInstanceId);
+            arguments.getContext().getVariables().put("startedpid",
+                                                      processInstanceId);
+        } catch (Exception e) {
+            arguments.getContext().getVariables().put("startprocesserror",
+                                                      e.getMessage());
+        }
 
         Element container = new Element("div");
         container.setAttribute("th:replace",

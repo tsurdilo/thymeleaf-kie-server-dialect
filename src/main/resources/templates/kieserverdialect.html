@@ -4,8 +4,31 @@
 <head></head>
 <body>
 
-<div class="alert alert-success" role="alert" th:fragment="startprocess">
-    <strong>Process successfully started! Process instance id: <span th:text="${startedpid}"/></strong>
+<div th:fragment="startprocess">
+    <div class="alert alert-success" role="alert" th:if="${startprocesserror == null}">
+        <strong>Started process instance: <span th:text="${startedpid}"/></strong>
+    </div>
+    <div class="alert alert-danger" role="alert" th:if="${startprocesserror != null}">
+        <strong>Error starting process instance: <span th:text="${startprocesserror}"/></strong>
+    </div>
+</div>
+
+<div th:fragment="abortprocess">
+    <div class="alert alert-info" role="alert" th:if="${abortprocesserror == null}">
+        <strong>Aborted process instance: <span th:text="${abortedpid}"/></strong>
+    </div>
+    <div class="alert alert-danger" role="alert" th:if="${abortprocesserror != null}">
+        <strong>Error aborting process instance: <span th:text="${abortprocesserror}"/></strong>
+    </div>
+</div>
+
+<div th:fragment="signalprocess">
+    <div class="alert alert-info" role="alert" th:if="${signalprocesserror == null}">
+        <strong>Signalled process instance: <span th:text="${signalledpid}"/></strong>
+    </div>
+    <div class="alert alert-danger" role="alert" th:if="${signalprocesserror != null}">
+        <strong>Error signalling process instance: <span th:text="${signalprocesserror}"/></strong>
+    </div>
 </div>
 
 <div th:fragment="showprocessdefs">

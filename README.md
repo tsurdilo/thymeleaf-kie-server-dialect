@@ -102,3 +102,34 @@ When your page is being parsed by Thymeleaf the business process will be started
 and the output will be an alert, for example:
 
 ![Sample process start result](sampleprocessstartresult.png?raw=true)
+
+# Aborting a business process instance
+In the body section of your page add:
+```html
+<kieserver:abortprocess deploymentid="${deploymentid}"
+            processinstanceid="${processinstanceid}"/>
+```
+
+where ${deploymentid} ${processinstanceid} and processinputs are your Model attributes added in the 
+@Get mapping of your template. 
+
+Notes:
+* deploymentid and processinstanceid attributes can also accept hard-coded string values
+* deploymentid and processinstanceid are required attributes
+
+# Signalling a process instance
+In the body section of your page add:
+```html
+<kieserver:signalprocess deploymentid="${deploymentid}"
+                processinstanceid="${processinstanceid}"
+                signalname="${signalname}"
+                event="${event}"/>
+```
+
+where ${deploymentid} ${processinstanceid} ${signalname} ${event} and processinputs are your Model attributes added in the 
+@Get mapping of your template. 
+
+Notes:
+* deploymentid and processinstanceid attributes can also accept hard-coded string values, event has to be an expression resolving
+to an Object type variable
+* deploymentid and processinstanceid  and signalname are required attributes, event is optional
