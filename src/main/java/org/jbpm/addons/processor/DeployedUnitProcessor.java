@@ -17,11 +17,13 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
+import static org.jbpm.addons.util.KieServerDialectUtils.getFragmentName;
 import static org.jbpm.addons.util.KieServerDialectUtils.isExpression;
 
 public class DeployedUnitProcessor extends AbstractMarkupSubstitutionElementProcessor {
 
     private static final String ATTR_NAME = "deployments";
+    private static final String DEFAULT_FRAGMENT_NAME = "kieserverdialect :: showdeployedunits";
     private static final int PRECEDENCE = 10000;
 
     public DeployedUnitProcessor(String elementName) {
@@ -87,7 +89,11 @@ public class DeployedUnitProcessor extends AbstractMarkupSubstitutionElementProc
 
         Element container = new Element("div");
         container.setAttribute("th:replace",
-                               "kieserverdialect :: showdeployedunits");
+                               getFragmentName(element.getAttributeValue("fragment"),
+                                               DEFAULT_FRAGMENT_NAME,
+                                               parser,
+                                               configuration,
+                                               arguments));
 
         List<Node> nodes = new ArrayList<Node>();
         nodes.add(container);
