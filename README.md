@@ -83,7 +83,7 @@ This will generate a table on your page displaying all processes that are define
 You can start a process intsance by clicking on the "Start" action button. This will open the process form where you
 can enter in process data defined in the form and start the business process.
 
-![Sample start business process|50%](samplestartprocess.png)
+![Sample start business process](samplestartprocess.png){:height="36px" width="36px"}
 
 # Display deployment unit info
 In the body section of your template add:
