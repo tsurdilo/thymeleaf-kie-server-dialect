@@ -25,11 +25,15 @@ And that's it! You are now ready to start using the dialect in your Thymeleaf te
 # Using the dialect
 
 # Setting up your template html
-1. Kie Server dialect by default produces html which includes some boostrap style class names. In order for those to work
-you need to add the boostrap style to your page <head> section, for example:
+1. Kie Server dialect by default produces html which includes some boostrap style class names and js functions. In order for those to work
+you need to add the boostrap style and js and jquery to your page <head> section, for example:
 
 ```html
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">  
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">  
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
 ```
 You are however not bound to use the default generated html and can create your own display of the 
 resulting information. For this see the "Creating your own display" section.

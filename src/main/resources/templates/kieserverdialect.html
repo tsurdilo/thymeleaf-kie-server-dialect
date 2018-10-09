@@ -31,7 +31,7 @@
     </div>
 </div>
 
-<div th:fragment="showprocessdefs">
+<div id="processdefsdiv" th:fragment="showprocessdefs" style="border:1px solid black;">
     <div class="page-header">
         <h3>
             <center><strong>Process Definitions Info</strong></center>
@@ -48,6 +48,7 @@
                 <th scope="col">Package</th>
                 <th scope="col">Type</th>
                 <th scope="col">Deployment Id</th>
+                <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -59,6 +60,12 @@
                 <td th:text="${processdef.packageName}"/>
                 <td th:text="${processdef.type}"/>
                 <td th:text="${processdef.deploymentId}"/>
+                <td>
+                    <button type="button"
+                            class="btn btn-primary btn-sm"
+                            th:onclick="'ksdStartProcessInstance(\'' + ${processdef.deploymentId} + '\',\'' +  ${processdef.id} + '\');'">Start
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -66,10 +73,27 @@
     <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processdefs)}">
         <strong>No Process Definitions available.</strong>
     </div>
+    <div id="startprocessmodalholder"></div>
+    <script>
+        function ksdStartProcessInstance(containerid, processid) {
+            $.ajax({
+                url: "/ksdstartprocess/" + processid + "/" + containerid,
+                success: function (data) {
+                    $("#startprocessmodalholder").html(data);
+                    $("#startprocessmodal").modal("show");
+                }
+            });
+        }
+
+        function afterProcessStarted() {
+            $('#startprocessmodal').modal('hide');
+        }
+    </script>
+
 </div>
 
 
-<div th:fragment="showprocessinstances">
+<div id="processinstancesdiv" th:fragment="showprocessinstances" style="border:1px solid black;">
     <div class="page-header">
         <h3>
             <center><strong>Process Instances Info</strong></center>
@@ -86,8 +110,7 @@
                 <th scope="col">Version</th>
                 <th scope="col">Initiator</th>
                 <th scope="col">Description</th>
-                <th scope="col">Correlation Key</th>
-                <th scope="col">Active Tasks</th>
+                <th scope="col">Work on Tasks</th>
             </tr>
             </thead>
             <tbody>
@@ -99,11 +122,13 @@
                 <td th:text="${processinst.getProcessVersion()}"/>
                 <td th:text="${processinst.getInitiator()}"/>
                 <td th:text="${processinst.getProcessInstanceDescription()}"/>
-                <td th:text="${processinst.getCorrelationKey()}"/>
                 <td>
                     <ul>
-                        <li th:each="activetask : ${processinst.getActiveTasks()}"
-                            th:text="${activetask.getName()}"></li>
+                        <li th:each="createdtask : ${createdtasks.get(processinst.getId())}"
+                            th:if="${createdtasks.get(processinst.getId()) != null}">
+                            <a href="#" th:onclick="'ksdWorkOnTask(\'' + ${createdtask.getDeploymentId()} + '\',\'' +  ${createdtask.getTaskId()} + '\');return false;'"
+                               th:text="${createdtask.getName()}""/>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -113,10 +138,26 @@
     <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processinstances)}">
         <strong>No Process Instances available.</strong>
     </div>
+    <div id="workontasksmodalholder"></div>
+    <script>
+        function ksdWorkOnTask(containerid, taskid) {
+            $.ajax({
+                url: "/ksdworkontask/" + taskid + "/" + containerid,
+                success: function (data) {
+                    $("#workontasksmodalholder").html(data);
+                    $("#workontaskmodal").modal("show");
+                }
+            });
+        }
+
+        function afterTaskCompleted() {
+            $('#workontaskmodal').modal('hide');
+        }
+    </script>
 </div>
 
 
-<div th:fragment="showdeployedunits">
+<div id="deploymentunitsdiv" th:fragment="showdeployedunits" style="border:1px solid black;">
     <div class="page-header">
         <h3>
             <center><strong>Deployment Units Info</strong></center>
@@ -132,43 +173,43 @@
                         <br/><strong><span th:text="'Strategy: ' + ${dunit.getDeploymentUnit().getStrategy()}"></span></strong>
                         <br/><strong><span th:text="'Is Active: ' + ${dunit.getDeploymentUnit().isActive()}"></span></strong>
                         <br/><br/><strong>Deployed Assets: </strong>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Asset ID</th>
-                                <th scope="col">Asset Name</th>
-                                <th scope="col">Asset Version</th>
-                                <th scope="col">Asset Type</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="dunitasset: ${dunit.getDeployedAssets()}">
-                                <th scope="row" th:text="${dunitassetStat.count}"/>
-                                <td th:text="${dunitasset.getId()}"/>
-                                <td th:text="${dunitasset.getName()}"/>
-                                <td th:text="${dunitasset.getVersion()}"/>
-                                <td th:text="${dunitasset.getKnowledgeType()}"/>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <br/><strong>Deployed Classes: </strong>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Class Name</th>
-                                <th scope="col">Class Type</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="dunitclass: ${dunit.getDeployedClasses()}">
-                                <th scope="row" th:text="${dunitclassStat.count}"/>
-                                <td th:text="${dunitclass.getName()}"/>
-                                <td th:text="${dunitclass.getTypeName()}"/>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Asset ID</th>
+                            <th scope="col">Asset Name</th>
+                            <th scope="col">Asset Version</th>
+                            <th scope="col">Asset Type</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="dunitasset: ${dunit.getDeployedAssets()}">
+                            <th scope="row" th:text="${dunitassetStat.count}"/>
+                            <td th:text="${dunitasset.getId()}"/>
+                            <td th:text="${dunitasset.getName()}"/>
+                            <td th:text="${dunitasset.getVersion()}"/>
+                            <td th:text="${dunitasset.getKnowledgeType()}"/>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br/><strong>Deployed Classes: </strong>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Class Name</th>
+                            <th scope="col">Class Type</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="dunitclass: ${dunit.getDeployedClasses()}">
+                            <th scope="row" th:text="${dunitclassStat.count}"/>
+                            <td th:text="${dunitclass.getName()}"/>
+                            <td th:text="${dunitclass.getTypeName()}"/>
+                        </tr>
+                        </tbody>
+                    </table>
                     </p>
                 </div>
             </div>
@@ -177,6 +218,75 @@
     </div>
     <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(deployedunits)}">
         <strong>No Deployment Units available.</strong>
+    </div>
+</div>
+
+<div id="processintancesimagediv" th:fragment="showprocessimages" style="border:1px solid black;">
+    <div class="page-header">
+        <h3>
+            <center><strong>Process Instance Image</strong></center>
+        </h3>
+    </div>
+    <center>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                Select Process Instance
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="processinstancesdropdown">
+                <th:block th:each="processinst: ${processinstances}">
+                    <a class="dropdown-item" href="#" th:text="${processinst.getId()}"
+                       th:onclick="'showProcessInstanceImage(\'' + ${processinst.getDeploymentId()} + '\',\'' +  ${processinst.getId()} + '\');return false;'"></a>
+                </th:block>
+            </div>
+        </div>
+        <br/>
+        <div class="embed-responsive" style="width: 100%; height: 400px;">
+            <iframe id="processimageframe" class="embed-responsive-item" src=""></iframe>
+        </div>
+    </center>
+    <script>
+        function showProcessInstanceImage(deploymentid, processinstanceid) {
+            var imageurl = "/rest/server/containers/" + deploymentid + "/images/processes/instances/" + processinstanceid;
+            $("#processimageframe").attr('src', imageurl);
+            return false;
+        }
+    </script>
+</div>
+
+
+<div class="modal fade" id="startprocessmodal" tabindex="-1" role="dialog" aria-labelledby="startprocesslabel" aria-hidden="true" th:fragment="startprocessmodal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="startprocesslabel">Start business process</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="embed-responsive embed-responsive-21by9">
+                    <iframe class="embed-responsive-item" th:src="${formlocation}"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="workontaskmodal" tabindex="-1" role="dialog" aria-labelledby="workontasklabel" aria-hidden="true" th:fragment="workontaskmodal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="workontasklabel">Work on Task</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="embed-responsive embed-responsive-21by9">
+                    <iframe class="embed-responsive-item" th:src="${formlocation}"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

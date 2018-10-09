@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.jbpm.addons.processor.AbortProcessProcessor;
 import org.jbpm.addons.processor.DeployedUnitProcessor;
+import org.jbpm.addons.processor.ProcessInstanceImageProcessor;
 import org.jbpm.addons.processor.ProcessInstancesProcessor;
 import org.jbpm.addons.processor.ProcessesDefsProcessor;
 import org.jbpm.addons.processor.SignalProcessProcessor;
@@ -27,6 +28,7 @@ public class KieServerDialect extends AbstractDialect {
         processors.add(new ProcessesDefsProcessor());
         processors.add(new ProcessInstancesProcessor());
         processors.add(new DeployedUnitProcessor());
+        processors.add(new ProcessInstanceImageProcessor());
 
         return processors;
     }

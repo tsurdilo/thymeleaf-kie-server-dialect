@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.jbpm.addons.config.KieServerDialectConfig
+org.jbpm.addons.config.KieServerDialectConfig,\
+org.jbpm.addons.controller.KieServerDialectController
