@@ -24,7 +24,7 @@ And that's it! You are now ready to start using the dialect in your Thymeleaf te
 
 # Using the dialect
 
-# Setting up your template html
+# Setting things up
 1. Kie Server dialect by default produces html which includes some boostrap style class names and js functions. In order for those to work
 you need to add the boostrap style and js and jquery to your page <head> section, for example:
 
@@ -32,6 +32,7 @@ you need to add the boostrap style and js and jquery to your page <head> section
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">  
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 ```
@@ -44,6 +45,30 @@ page tag (note this step is optional):
 ```html
 <html xmlns:th="http://www.thymeleaf.org" xmlns:kieserver="http://jbpm.org/">
 ```
+3. In order to display the process and task forms the dialect uses inline frames. This is by default disabled 
+in your business application and you have to enable it. 
+To enable edit your DefaultWebSecurityConfig.java file adding
+
+```java
+.headers().frameOptions().sameOrigin()
+```
+
+So your entire configure method can look like:
+
+```java
+@Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/rest/*").authenticated()
+                .and()
+                .httpBasic()
+                .and()
+                .headers().frameOptions().sameOrigin();
+    }
+```
+
 
 # Display all process definitions
 In the body section of your template add:
@@ -55,8 +80,10 @@ This will generate a table on your page displaying all processes that are define
 
 ![Sample process definitions](sampleprocessdefs.png?raw=true)
 
-Once more processes are registered or unregistered a simple page-refresh will update 
-this table for you. 
+You can start a process intsance by clicking on the "Start" action button. This will open the process form where you
+can enter in process data defined in the form and start the business process.
+
+![Sample start business process](samplestartprocess.png?raw=true)
 
 # Display deployment unit info
 In the body section of your template add:
@@ -85,8 +112,23 @@ This will display info table with  all available process instances:
 
 ![Sample deployment unit info](sampleprocessinstances.png?raw=true)
 
-If you process instance is active the Active Tasks column will be populated with the 
-Task names.
+If the task instance contains Tasks that can be worked on will be displayed in the "Work on Tasks" column. 
+Each is a link which when clicked will open up the task form modal which includes the task form and buttons with which
+you can advance the user task. 
+
+![Sample work on task](sampleworkontask.png?raw=true)
+
+# Display process instances image
+In the body section of your template add:
+```html
+<kieserver:processimages/>
+```
+
+This will display a dropdown table with a list of process instances. If there are no process instances
+available the dropdown will be empty. You an pick a process instance id from the dropdown which will then display
+the annotated process instance image, for example:
+
+![Sample work on task](sampleprocessimage.png?raw=true)
 
 
 # Starting a business process
