@@ -83,7 +83,7 @@ This will generate a table on your page displaying all processes that are define
 You can start a process intsance by clicking on the "Start" action button. This will open the process form where you
 can enter in process data defined in the form and start the business process.
 
-![Sample start business process](samplestartprocess.png?raw=true)
+![Sample start business process|50%](samplestartprocess.png?raw=true)
 
 # Display deployment unit info
 In the body section of your template add:
@@ -116,7 +116,7 @@ If the task instance contains Tasks that can be worked on will be displayed in t
 Each is a link which when clicked will open up the task form modal which includes the task form and buttons with which
 you can advance the user task. 
 
-![Sample work on task](sampleworkontask.png?raw=true)
+![Sample work on task|50%](sampleworkontask.png?raw=true)
 
 # Display process instances image
 In the body section of your template add:
@@ -128,7 +128,7 @@ This will display a dropdown table with a list of process instances. If there ar
 available the dropdown will be empty. You an pick a process instance id from the dropdown which will then display
 the annotated process instance image, for example:
 
-![Sample work on task](sampleprocessimage.png?raw=true)
+![Sample process image](sampleprocessimage.png?raw=true)
 
 
 # Starting a business process
