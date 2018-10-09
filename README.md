@@ -22,8 +22,6 @@ in just a single step:
 ```
 And that's it! You are now ready to start using the dialect in your Thymeleaf templates!
 
-# Using the dialect
-
 # Setting things up
 1. Kie Server dialect by default produces html which includes some boostrap style class names and js functions. In order for those to work
 you need to add the boostrap style and js and jquery to your page <head> section, for example:
@@ -69,6 +67,8 @@ So your entire configure method can look like:
     }
 ```
 
+# Using the dialect
+Now that you have set everything up here is how you can use the dialect
 
 # Display all process definitions
 In the body section of your template add:
