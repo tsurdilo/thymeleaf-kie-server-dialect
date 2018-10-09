@@ -78,12 +78,12 @@ In the body section of your template add:
 
 This will generate a table on your page displaying all processes that are defined and registered, for example:
 
-![Sample process definitions](sampleprocessdefs.png?raw=true)
+![Sample process definitions](docimages/sampleprocessdefs.png?raw=true)
 
 You can start a process intsance by clicking on the "Start" action button. This will open the process form where you
 can enter in process data defined in the form and start the business process.
 
-![Sample start business process](samplestartprocess.png)
+![Sample start business process](docimages/samplestartprocess.png)
 
 # Display deployment unit info
 In the body section of your template add:
@@ -93,7 +93,7 @@ In the body section of your template add:
 
 This will display info for all deployment units:
 
-![Sample deployment unit info](sampledeploymentunits.png?raw=true)
+![Sample deployment unit info](docimages/sampledeploymentunits.png?raw=true)
 
 You can also pass a deployment unit id parameter to show info for a specific 
 deployment unit:
@@ -110,13 +110,13 @@ In the body section of your template add:
 
 This will display info table with  all available process instances:
 
-![Sample deployment unit info](sampleprocessinstances.png?raw=true)
+![Sample deployment unit info](docimages/sampleprocessinstances.png?raw=true)
 
 If the task instance contains Tasks that can be worked on will be displayed in the "Work on Tasks" column. 
 Each is a link which when clicked will open up the task form modal which includes the task form and buttons with which
 you can advance the user task. 
 
-![Sample work on task|50%](sampleworkontask.png?raw=true)
+![Sample work on task|50%](docimages/sampleworkontask.png?raw=true)
 
 # Display process instances image
 In the body section of your template add:
@@ -128,7 +128,7 @@ This will display a dropdown table with a list of process instances. If there ar
 available the dropdown will be empty. You an pick a process instance id from the dropdown which will then display
 the annotated process instance image, for example:
 
-![Sample process image](sampleprocessimage.png?raw=true)
+![Sample process image](docimages/sampleprocessimage.png?raw=true)
 
 
 # Starting a business process
@@ -152,7 +152,7 @@ where processinputs is optional (in case your process started does not take any 
 When your page is being parsed by Thymeleaf the business process will be started. 
 and the output will be an alert, for example:
 
-![Sample process start result](sampleprocessstartresult.png?raw=true)
+![Sample process start result](docimages/sampleprocessstartresult.png?raw=true)
 
 # Aborting a business process instance
 In the body section of your page add:
