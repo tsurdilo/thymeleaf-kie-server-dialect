@@ -1,74 +1,59 @@
 package org.jbpm.addons.processor;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jbpm.services.api.RuntimeDataService;
 import org.jbpm.services.api.model.ProcessInstanceDesc;
 import org.kie.api.runtime.query.QueryContext;
 import org.springframework.context.ApplicationContext;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.IElementNameProcessorMatcher;
-import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
-import org.thymeleaf.spring4.context.SpringWebContext;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import static org.jbpm.addons.util.KieServerDialectUtils.getFragmentName;
 
-public class ProcessInstanceImageProcessor extends AbstractMarkupSubstitutionElementProcessor {
-    private static final String ATTR_NAME = "processimages";
-    private static final String DEFAULT_FRAGMENT_NAME = "kieserverdialect :: showprocessimages";
-    private static final int PRECEDENCE = 10000;
+public class ProcessInstanceImageProcessor extends AbstractElementTagProcessor {
 
-    public ProcessInstanceImageProcessor(String elementName) {
-        super(elementName);
-    }
+        private static final String TAG_NAME = "processimages";
+        private static final String DEFAULT_FRAGMENT_NAME = "kieserverdialect :: showprocessimages";
+        private static final int PRECEDENCE = 10000;
 
-    public ProcessInstanceImageProcessor() {
-        super(ATTR_NAME);
-    }
+        private final ApplicationContext ctx;
 
-    public ProcessInstanceImageProcessor(IElementNameProcessorMatcher matcher) {
-        super(matcher);
-    }
+        public ProcessInstanceImageProcessor(final String dialectPrefix, ApplicationContext ctx) {
 
-    @Override
-    public int getPrecedence() {
-        return PRECEDENCE;
-    }
+                super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
 
-    @Override
-    protected List<Node> getMarkupSubstitutes(
-            final Arguments arguments,
-            final Element element) {
+                this.ctx = ctx;
+        }
 
-        ApplicationContext appCtx =
-                ((SpringWebContext) arguments.getContext()).getApplicationContext();
+        @Override
+        protected void doProcess(ITemplateContext templateContext, IProcessableElementTag processInstanceImageTag,
+                        IElementTagStructureHandler structureHandler) {
 
-        Configuration configuration = arguments.getConfiguration();
-        IStandardExpressionParser parser =
-                StandardExpressions.getExpressionParser(configuration);
+                RuntimeDataService runtimeDataService = (RuntimeDataService) ctx.getBean("runtimeDataService");
+                Collection<ProcessInstanceDesc> processInstances = runtimeDataService
+                                .getProcessInstances(new QueryContext());
 
-        RuntimeDataService runtimeDataService = (RuntimeDataService) appCtx.getBean("runtimeDataService");
-        Collection<ProcessInstanceDesc> processInstances = runtimeDataService.getProcessInstances(new QueryContext());
-        arguments.getContext().getVariables().put("processinstances",
-                                                  processInstances);
+                structureHandler.setLocalVariable("processinstances", processInstances);
 
-        Element container = new Element("div");
-        container.setAttribute("th:replace",
-                               getFragmentName(element.getAttributeValue("fragment"),
-                                               DEFAULT_FRAGMENT_NAME,
-                                               parser,
-                                               configuration,
-                                               arguments));
+                final IModelFactory modelFactory = templateContext.getModelFactory();
+                final IModel model = modelFactory.createModel();
 
-        List<Node> nodes = new ArrayList<Node>();
-        nodes.add(container);
-        return nodes;
-    }
+                final IEngineConfiguration configuration = templateContext.getConfiguration();
+                IStandardExpressionParser parser = StandardExpressions.getExpressionParser(configuration);
+
+                model.add(modelFactory.createOpenElementTag("div", "th:replace",
+                                getFragmentName(processInstanceImageTag.getAttributeValue("fragment"),
+                                                DEFAULT_FRAGMENT_NAME, parser, templateContext)));
+                model.add(modelFactory.createCloseElementTag("div"));
+                structureHandler.replaceWith(model, true);
+        }
 }

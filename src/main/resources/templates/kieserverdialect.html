@@ -1,76 +1,77 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head></head>
+
 <body>
 
-<div th:fragment="startprocess">
-    <div class="alert alert-success" role="alert" th:if="${startprocesserror == null}">
-        <strong>Started process instance: <span th:text="${startedpid}"/></strong>
+    <div th:fragment="startprocess">
+        <div class="alert alert-success" role="alert" th:if="${startprocesserror == null}">
+            <strong>Started process instance: <span th:text="${startedpid}" /></strong>
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${startprocesserror != null}">
+            <strong>Error starting process instance: <span th:text="${startprocesserror}" /></strong>
+        </div>
     </div>
-    <div class="alert alert-danger" role="alert" th:if="${startprocesserror != null}">
-        <strong>Error starting process instance: <span th:text="${startprocesserror}"/></strong>
-    </div>
-</div>
 
-<div th:fragment="abortprocess">
-    <div class="alert alert-info" role="alert" th:if="${abortprocesserror == null}">
-        <strong>Aborted process instance: <span th:text="${abortedpid}"/></strong>
+    <div th:fragment="abortprocess">
+        <div class="alert alert-info" role="alert" th:if="${abortprocesserror == null}">
+            <strong>Aborted process instance: <span th:text="${abortedpid}" /></strong>
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${abortprocesserror != null}">
+            <strong>Error aborting process instance: <span th:text="${abortprocesserror}" /></strong>
+        </div>
     </div>
-    <div class="alert alert-danger" role="alert" th:if="${abortprocesserror != null}">
-        <strong>Error aborting process instance: <span th:text="${abortprocesserror}"/></strong>
-    </div>
-</div>
 
-<div th:fragment="signalprocess">
-    <div class="alert alert-info" role="alert" th:if="${signalprocesserror == null}">
-        <strong>Signalled process instance: <span th:text="${signalledpid}"/></strong>
+    <div th:fragment="signalprocess">
+        <div class="alert alert-info" role="alert" th:if="${signalprocesserror == null}">
+            <strong>Signalled process instance: <span th:text="${signalledpid}" /></strong>
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${signalprocesserror != null}">
+            <strong>Error signalling process instance: <span th:text="${signalprocesserror}" /></strong>
+        </div>
     </div>
-    <div class="alert alert-danger" role="alert" th:if="${signalprocesserror != null}">
-        <strong>Error signalling process instance: <span th:text="${signalprocesserror}"/></strong>
-    </div>
-</div>
 
-<div id="processdefsdiv" th:fragment="showprocessdefs" style="border:1px solid black;">
-    <div class="page-header">
-        <h3>
-            <center><strong>Process Definitions Info</strong></center>
-        </h3>
-    </div>
-    <div th:if="${not #lists.isEmpty(processdefs)}">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Version</th>
-                <th scope="col">Package</th>
-                <th scope="col">Type</th>
-                <th scope="col">Deployment Id</th>
-                <th scope="col">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="processdef: ${processdefs}">
-                <th scope="row" th:text="${processdefStat.count}"/>
-                <td th:text="${processdef.id}"/>
-                <td th:text="${processdef.name}"/>
-                <td th:text="${processdef.version}"/>
-                <td th:text="${processdef.packageName}"/>
-                <td th:text="${processdef.type}"/>
-                <td th:text="${processdef.deploymentId}"/>
-                <td>
-                    <button type="button"
-                            class="btn btn-primary btn-sm"
-                            th:onclick="'ksdStartProcessInstance(\'' + ${processdef.deploymentId} + '\',\'' +  ${processdef.id} + '\');'">Start
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processdefs)}">
+    <div id="processdefsdiv" th:fragment="showprocessdefs" style="border:1px solid black;">
+        <div class="page-header">
+            <h3>
+                <center><strong>Process Definitions Info</strong></center>
+            </h3>
+        </div>
+        <div th:if="${not #lists.isEmpty(processdefs)}">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Version</th>
+                        <th scope="col">Package</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Deployment Id</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="processdef: ${processdefs}">
+                        <th scope="row" th:text="${processdefStat.count}" />
+                        <td th:text="${processdef.id}" />
+                        <td th:text="${processdef.name}" />
+                        <td th:text="${processdef.version}" />
+                        <td th:text="${processdef.packageName}" />
+                        <td th:text="${processdef.type}" />
+                        <td th:text="${processdef.deploymentId}" />
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm"
+                                th:data-deploymentId="${processdef.deploymentId}" th:data-id="${processdef.id}" onclick="ksdStartProcessInstance(this.getAttribute('data-deploymentId'),
+                                this.getAttribute('data-id'));">Start
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(processdefs)}">
         <strong>No Process Definitions available.</strong>
     </div>
     <div id="startprocessmodalholder"></div>
@@ -127,8 +128,12 @@
                     <ul>
                         <li th:each="createdtask : ${createdtasks.get(processinst.getId())}"
                             th:if="${createdtasks.get(processinst.getId()) != null}">
-                            <a href="#" th:onclick="'ksdWorkOnTask(\'' + ${createdtask.getDeploymentId()} + '\',\'' +  ${createdtask.getTaskId()} + '\');return false;'"
-                               th:text="${createdtask.getName()}""/>
+                            <a href="#" 
+                                th:data-deploymentId="${createdtask.getDeploymentId()}"
+                                th:data-taskid="${createdtask.getTaskId()}"
+                            onclick="ksdWorkOnTask(this.getAttribute('data-deploymentId'),
+                            this.getAttribute('data-taskid'));return false;"
+                               th:text="${createdtask.getName()}"/>
                         </li>
                     </ul>
                 </td>
@@ -237,7 +242,10 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="processinstancesdropdown">
                 <th:block th:each="processinst: ${processinstances}">
                     <a class="dropdown-item" href="#" th:text="${processinst.getId()}"
-                       th:onclick="'showProcessInstanceImage(\'' + ${processinst.getDeploymentId()} + '\',\'' +  ${processinst.getId()} + '\');return false;'"></a>
+                    th:data-deploymentid="${processinst.getDeploymentId()}"
+                    th:data-id="${processinst.getId()}" 
+                       onclick="showProcessInstanceImage(this.getAttribute('data-deploymentid'),
+                       this.getAttribute('data-id'));return false;"></a>
                 </th:block>
             </div>
         </div>

@@ -1,99 +1,74 @@
 package org.jbpm.addons.processor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.jbpm.services.api.ProcessService;
 import org.springframework.context.ApplicationContext;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.IElementNameProcessorMatcher;
-import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
-import org.thymeleaf.spring4.context.SpringWebContext;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import static org.jbpm.addons.util.KieServerDialectUtils.getFragmentName;
 import static org.jbpm.addons.util.KieServerDialectUtils.isExpression;
 
-public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProcessor {
+public class StartProcessProcessor extends AbstractElementTagProcessor {
 
-    private static final String ATTR_NAME = "startprocess";
+    private static final String TAG_NAME = "startprocess";
     private static final String DEFAULT_FRAGMENT_NAME = "kieserverdialect :: startprocess";
     private static final int PRECEDENCE = 10000;
 
-    public StartProcessProcessor(String elementName) {
-        super(elementName);
-    }
+    private final ApplicationContext ctx;
 
-    public StartProcessProcessor() {
-        super(ATTR_NAME);
-    }
+    public StartProcessProcessor(final String dialectPrefix, ApplicationContext ctx) {
 
-    public StartProcessProcessor(IElementNameProcessorMatcher matcher) {
-        super(matcher);
+        super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
+
+        this.ctx = ctx;
     }
 
     @Override
-    public int getPrecedence() {
-        return PRECEDENCE;
-    }
+    protected void doProcess(ITemplateContext templateContext, IProcessableElementTag startProcessTag,
+            IElementTagStructureHandler structureHandler) {
 
-    @Override
-    protected List<Node> getMarkupSubstitutes(
-            final Arguments arguments,
-            final Element element) {
+        ProcessService processService = (ProcessService) ctx.getBean("processService");
 
-        ApplicationContext appCtx =
-                ((SpringWebContext) arguments.getContext()).getApplicationContext();
-
-        ProcessService processService = (ProcessService) appCtx.getBean("processService");
-
-        String containerIdAttrValue = element.getAttributeValue("containerid");
-        String processIdAttrValue = element.getAttributeValue("processid");
-        String processInputsAttrValue = element.getAttributeValue("processinputs");
+        String containerIdAttrValue = startProcessTag.getAttributeValue("containerid");
+        String processIdAttrValue = startProcessTag.getAttributeValue("processid");
+        String processInputsAttrValue = startProcessTag.getAttributeValue("processinputs");
 
         String containerId;
         String processId;
         Map<String, Object> processInputs = null;
         long processInstanceId;
 
-        Configuration configuration = arguments.getConfiguration();
-        IStandardExpressionParser parser =
-                StandardExpressions.getExpressionParser(configuration);
-
-
+        final IEngineConfiguration configuration = templateContext.getConfiguration();
+        IStandardExpressionParser parser = StandardExpressions.getExpressionParser(configuration);
 
         if (isExpression(containerIdAttrValue)) {
-            IStandardExpression containerIdExpression =
-                    parser.parseExpression(configuration,
-                                           arguments,
-                                           containerIdAttrValue);
+            IStandardExpression containerIdExpression = parser.parseExpression(templateContext, containerIdAttrValue);
 
-            containerId =
-                    (String) containerIdExpression.execute(configuration,
-                                                           arguments);
+            containerId = (String) containerIdExpression.execute(templateContext);
 
             if (containerId == null) {
-                throw new IllegalArgumentException("Unable to resolve expression for containerid: " + containerIdAttrValue);
+                throw new IllegalArgumentException(
+                        "Unable to resolve expression for containerid: " + containerIdAttrValue);
             }
         } else {
             containerId = containerIdAttrValue;
         }
 
         if (isExpression(processIdAttrValue)) {
-            IStandardExpression processIdExpression =
-                    parser.parseExpression(configuration,
-                                           arguments,
-                                           processIdAttrValue);
+            IStandardExpression processIdExpression = parser.parseExpression(templateContext, processIdAttrValue);
 
-            processId =
-                    (String) processIdExpression.execute(configuration,
-                                                         arguments);
+            processId = (String) processIdExpression.execute(templateContext);
 
             if (processId == null) {
                 throw new IllegalArgumentException("Unable to resolve expression for processid: " + processIdAttrValue);
@@ -103,43 +78,29 @@ public class StartProcessProcessor extends AbstractMarkupSubstitutionElementProc
         }
 
         if (isExpression(processInputsAttrValue)) {
-            IStandardExpression processInputsExpression =
-                    parser.parseExpression(configuration,
-                                           arguments,
-                                           processInputsAttrValue);
-
-            processInputs =
-                    (Map<String, Object>) processInputsExpression.execute(configuration,
-                                                                          arguments);
+            IStandardExpression processInputsExpression = parser.parseExpression(templateContext,
+                    processInputsAttrValue);
+            processInputs = (Map<String, Object>) processInputsExpression.execute(templateContext);
         }
 
         try {
             if (processInputs == null) {
-                processInstanceId = processService.startProcess(containerId,
-                                                                processId);
+                processInstanceId = processService.startProcess(containerId, processId);
             } else {
-                processInstanceId = processService.startProcess(containerId,
-                                                                processId,
-                                                                processInputs);
+                processInstanceId = processService.startProcess(containerId, processId, processInputs);
             }
 
-            arguments.getContext().getVariables().put("startedpid",
-                                                      processInstanceId);
+            structureHandler.setLocalVariable("startedpid", processInstanceId);
         } catch (Exception e) {
-            arguments.getContext().getVariables().put("startprocesserror",
-                                                      e.getMessage());
+            structureHandler.setLocalVariable("startprocesserror", e.getMessage());
         }
 
-        Element container = new Element("div");
-        container.setAttribute("th:replace",
-                               getFragmentName(element.getAttributeValue("fragment"),
-                                               DEFAULT_FRAGMENT_NAME,
-                                               parser,
-                                               configuration,
-                                               arguments));
+        final IModelFactory modelFactory = templateContext.getModelFactory();
+        final IModel model = modelFactory.createModel();
 
-        List<Node> nodes = new ArrayList<Node>();
-        nodes.add(container);
-        return nodes;
+        model.add(modelFactory.createOpenElementTag("div", "th:replace", getFragmentName(
+                startProcessTag.getAttributeValue("fragment"), DEFAULT_FRAGMENT_NAME, parser, templateContext)));
+        model.add(modelFactory.createCloseElementTag("div"));
+        structureHandler.replaceWith(model, true);
     }
 }

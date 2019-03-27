@@ -10,12 +10,9 @@ the display of the resulting information.
 
 # Note
 
-This dialect works with jBPM Business Applications generated
-with versions < 1.8! Since 1.8 jBPM Business Apps are generated
-with SpringBoot 2 which uses a new Thymeleaf versions that
-did not carry over backwards capabilities for dialect api.
-
-A new project will be created which has SpringBoot 2 support soon.
+SpringBoot 2 support added! This dialect now works out of box with
+jBPM Business applications generated with start.jbpm.org (versions 1.8 or greater)
+which are generated using SpringBoot version 2.
 
 # Installing the dialect
 
@@ -28,7 +25,7 @@ in just a single step:
 <dependency>
   <groupId>org.jbpm.addons</groupId>
   <artifactId>thymeleaf-kie-server-dialect</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -62,30 +59,6 @@ resulting information. For this see the "Creating your own display" section.
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:kieserver="http://jbpm.org/"
 ></html>
-```
-
-3. In order to display the process and task forms the dialect uses inline frames. This is by default disabled
-   in your business application and you have to enable it.
-   To enable edit your DefaultWebSecurityConfig.java file adding
-
-```java
-.headers().frameOptions().sameOrigin()
-```
-
-So your entire configure method can look like:
-
-```java
-@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/rest/*").authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .headers().frameOptions().sameOrigin();
-    }
 ```
 
 # Using the dialect

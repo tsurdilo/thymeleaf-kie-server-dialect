@@ -1,75 +1,58 @@
 package org.jbpm.addons.processor;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jbpm.services.api.RuntimeDataService;
 import org.jbpm.services.api.model.ProcessDefinition;
 import org.kie.api.runtime.query.QueryContext;
 import org.springframework.context.ApplicationContext;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.IElementNameProcessorMatcher;
-import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
-import org.thymeleaf.spring4.context.SpringWebContext;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import static org.jbpm.addons.util.KieServerDialectUtils.getFragmentName;
 
-public class ProcessesDefsProcessor extends AbstractMarkupSubstitutionElementProcessor {
+public class ProcessesDefsProcessor extends AbstractElementTagProcessor {
 
-    private static final String ATTR_NAME = "processdefs";
-    private static final String DEFAULT_FRAGMENT_NAME = "kieserverdialect :: showprocessdefs";
-    private static final int PRECEDENCE = 10000;
+        private static final String TAG_NAME = "processdefs";
+        private static final String DEFAULT_FRAGMENT_NAME = "kieserverdialect :: showprocessdefs";
+        private static final int PRECEDENCE = 10000;
 
-    public ProcessesDefsProcessor(String elementName) {
-        super(elementName);
-    }
+        private final ApplicationContext ctx;
 
-    public ProcessesDefsProcessor() {
-        super(ATTR_NAME);
-    }
+        public ProcessesDefsProcessor(final String dialectPrefix, ApplicationContext ctx) {
 
-    public ProcessesDefsProcessor(IElementNameProcessorMatcher matcher) {
-        super(matcher);
-    }
+                super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
 
-    @Override
-    public int getPrecedence() {
-        return PRECEDENCE;
-    }
+                this.ctx = ctx;
+        }
 
-    @Override
-    protected List<Node> getMarkupSubstitutes(
-            final Arguments arguments,
-            final Element element) {
+        @Override
+        protected void doProcess(ITemplateContext templateContext, IProcessableElementTag processDefsTag,
+                        IElementTagStructureHandler structureHandler) {
 
-        ApplicationContext appCtx =
-                ((SpringWebContext) arguments.getContext()).getApplicationContext();
+                RuntimeDataService runtimeDataService = (RuntimeDataService) ctx.getBean("runtimeDataService");
+                Collection<ProcessDefinition> processDefinitions = runtimeDataService.getProcesses(new QueryContext());
 
-        Configuration configuration = arguments.getConfiguration();
-        IStandardExpressionParser parser =
-                StandardExpressions.getExpressionParser(configuration);
+                structureHandler.setLocalVariable("processdefs", processDefinitions);
 
-        RuntimeDataService runtimeDataService = (RuntimeDataService) appCtx.getBean("runtimeDataService");
-        Collection<ProcessDefinition> processDefinitions = runtimeDataService.getProcesses(new QueryContext());
-        arguments.getContext().getVariables().put("processdefs",
-                                                  processDefinitions);
+                final IModelFactory modelFactory = templateContext.getModelFactory();
+                final IModel model = modelFactory.createModel();
 
-        Element container = new Element("div");
-        container.setAttribute("th:replace",
-                               getFragmentName(element.getAttributeValue("fragment"),
-                                               DEFAULT_FRAGMENT_NAME,
-                                               parser,
-                                               configuration,
-                                               arguments));
+                final IEngineConfiguration configuration = templateContext.getConfiguration();
+                IStandardExpressionParser parser = StandardExpressions.getExpressionParser(configuration);
 
-        List<Node> nodes = new ArrayList<Node>();
-        nodes.add(container);
-        return nodes;
-    }
+                model.add(modelFactory.createOpenElementTag("div", "th:replace",
+                                getFragmentName(processDefsTag.getAttributeValue("fragment"), DEFAULT_FRAGMENT_NAME,
+                                                parser, templateContext)));
+                model.add(modelFactory.createCloseElementTag("div"));
+                structureHandler.replaceWith(model, true);
+        }
 }

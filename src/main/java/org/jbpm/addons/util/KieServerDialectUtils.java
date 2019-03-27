@@ -1,7 +1,6 @@
 package org.jbpm.addons.util;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 
@@ -14,20 +13,16 @@ public class KieServerDialectUtils {
     public static String getFragmentName(String value,
                                          String defaulValue,
                                          IStandardExpressionParser parser,
-                                         Configuration configuration,
-                                         Arguments arguments) {
+                                         ITemplateContext templateContext) {
 
         if (value == null || value.trim().length() < 1) {
             return defaulValue;
         } else {
             if (isExpression(value)) {
-                IStandardExpression deploymentIdExpression =
-                        parser.parseExpression(configuration,
-                                               arguments,
-                                               value);
+                IStandardExpression expression = parser.parseExpression(templateContext,
+                                                                        value);
 
-                return (String) deploymentIdExpression.execute(configuration,
-                                                               arguments);
+                return (String) expression.execute(templateContext);
             } else {
                 return value;
             }
